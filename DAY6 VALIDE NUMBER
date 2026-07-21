@@ -1,0 +1,35 @@
+class Solution {
+    public boolean isNumber(String s) {
+        int n = s.length();
+        int i = 0;
+
+        if (i < n && (s.charAt(i) == '+' || s.charAt(i) == '-')) i++;
+
+        boolean digitsSeen = false;
+        boolean dotSeen = false;
+        boolean eSeen = false;
+
+        while (i < n) {
+            char c = s.charAt(i);
+
+            if (Character.isDigit(c)) {
+                digitsSeen = true;
+                i++;
+            } else if (c == '.') {
+                if (dotSeen || eSeen) return false;
+                dotSeen = true;
+                i++;
+            } else if (c == 'e' || c == 'E') {
+                if (eSeen || !digitsSeen) return false;
+                eSeen = true;
+                digitsSeen = false;
+                i++;
+                if (i < n && (s.charAt(i) == '+' || s.charAt(i) == '-')) i++;
+            } else {
+                return false;
+            }
+        }
+
+        return digitsSeen;
+    }
+}
