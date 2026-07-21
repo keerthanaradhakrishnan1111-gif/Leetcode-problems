@@ -1,0 +1,36 @@
+class DiningPhilosophers {
+    // Semaphore to limit concurrent eaters to 4, preventing deadlock
+    private final Semaphore eatLimit = new Semaphore(4);
+    private final Semaphore[] forks = new Semaphore[5];
+
+    public DiningPhilosophers() {
+        for (int i = 0; i < 5; i++) {
+            forks[i] = new Semaphore(1);
+        }
+    }
+
+    public void wantsToEat(int philosopher,
+                           Runnable pickLeftFork,
+                           Runnable pickRightFork,
+                           Runnable eat,
+                           Runnable putLeftFork,
+                           Runnable putRightFork) throws InterruptedException {
+
+        int left = philosopher;
+        int right = (philosopher + 1) % 5;
+
+        eatLimit.acquire();          // only 4 philosophers allowed to try at once
+        forks[left].acquire();
+        forks[right].acquire();
+
+        pickLeftFork.run();
+        pickRightFork.run();
+        eat.run();
+        putLeftFork.run();
+        putRightFork.run();
+
+        forks[left].release();
+        forks[right].release();
+        eatLimit.release();
+    }
+}
